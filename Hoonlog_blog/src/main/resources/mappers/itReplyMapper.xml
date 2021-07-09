@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="itReplyMapper">
+
+<insert id="itReplyWrite">
+ insert into it_reply (bno, userid, rno, replyContent)
+     values (#{bno}, #{userid}, board_reply_seq.nextval, #{replyContent})
+</insert>
+
+<!-- 상품 소감(댓글) 리스트 -->
+<select id="itReplyList" resultType="com.hoonlog.board.vo.ItReplyVO">
+ select
+     r.bno, r.userid, r.rno, r.replyContent, r.regdate, m.userNname
+ from it_reply r
+     inner join member m
+         on r.userid = m.userid
+     where bno = #{bno}
+     order by regdate desc
+</select>
+
+<!-- 상품 소감(댓글) 삭제 -->
+<delete id="itDeleteReply">
+ delete it_reply
+     where rno = #{rno}
+         and userid = #{userid}
+</delete>
+
+<!-- 아이디 체크 -->
+<select id="itReplyUserIdCheck" resultType="String">
+ select userid
+  from it_reply
+      where rno = #{rno}
+</select>
+
+
+<update id="itUpdateReply">
+ update it_reply
+     set
+         replyContent = #{replyContent}
+     where rno = #{rno}
+         and userid = #{userid}
+</update>
+
+</mapper>

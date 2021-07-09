@@ -1,0 +1,19 @@
+@charset "UTF-8";
+
+.container{
+	margin-top: 100px;
+	margin-right: auto;
+	margin-left: auto;
+	height: auto;
+	align-content: center;
+}
+
+/* 마이페이지 영역 */
+section.content { padding:20px 0; border-top:2px solid #eee; border-bottom:2px solid #eee; margin-top: 200px;}
+section.content::after { content:""; display:block; clear:both; }
+aside { float:left; width:300px; }
+div#content_box { float:right; width:75%; }
+ /*calc(100% - 300px - 20px)*/
+aside ul li { text-align:center; margin-bottom:10px; list-style: none;}
+aside ul li a { display:block; width:100%; padding:10px 0;}
+aside ul li a:hover { background:#eee; }

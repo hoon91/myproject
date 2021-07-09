@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="travelReplyMapper">
+
+<insert id="travelReplyWrite">
+ insert into travel_reply (bno, userid, rno, replyContent)
+     values (#{bno}, #{userid}, board_reply_seq.nextval, #{replyContent})
+</insert>
+
+<!-- 상품 소감(댓글) 리스트 -->
+<select id="travelReplyList" resultType="com.hoonlog.board.vo.TravelReplyVO">
+ select
+     r.bno, r.userid, r.rno, r.replyContent, r.regdate, m.userNname
+ from travel_reply r
+     inner join member m
+         on r.userid = m.userid
+     where bno = #{bno}
+     order by regdate desc
+</select>
+
+<!-- 상품 소감(댓글) 삭제 -->
+<delete id="travelDeleteReply">
+ delete travel_reply
+     where rno = #{rno}
+         and userid = #{userid}
+</delete>
+
+<!-- 아이디 체크 -->
+<select id="travelReplyUserIdCheck" resultType="String">
+ select userid
+  from travel_reply
+      where rno = #{rno}
+</select>
+
+
+<update id="travelUpdateReply">
+ update travel_reply
+     set
+         replyContent = #{replyContent}
+     where rno = #{rno}
+         and userid = #{userid}
+</update>
+
+</mapper>

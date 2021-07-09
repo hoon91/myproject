@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="diaryMapper">
+  	
+	<!-- 게시글 목록 -->
+	<select id="diaryListPage" resultType="com.hoonlog.board.vo.DiaryVO"
+	parameterType="com.hoonlog.board.utils.SearchCriteria">
+		SELECT * FROM ( 
+			SELECT ROWNUM AS RNUM, A.* FROM (
+				SELECT ROWNUM, BNO, TITLE, CONTENT, TAG, WRITER, VIEWCNT, D.REGDATE, D.UPDATEDATE,
+				<!-- 댓글 수 -->
+				(SELECT COUNT(*) FROM DIARY_REPLY WHERE BNO=D.BNO) AS REPLY_COUNT
+				FROM DIARY D
+				ORDER BY BNO DESC, D.REGDATE DESC
+			<include refid = "search"/>
+			) A
+				) WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+	</select>
+	
+	
+	<!-- 총 개시글 개수 -->
+	<select id="diaryListCnt" parameterType="com.hoonlog.board.utils.SearchCriteria" resultType="int"> 
+		SELECT COUNT(BNO) 
+		FROM DIARY
+		WHERE 1=1
+		<include refid = "search"/>
+		AND BNO > 0
+	</select>
+	
+	<!-- 게시글 조회 -->
+	<select id="diaryView" resultType="com.hoonlog.board.vo.DiaryVO" parameterType="com.hoonlog.board.vo.DiaryVO">
+		SELECT *
+		FROM
+			DIARY
+		WHERE
+			BNO = #{bno}
+	</select>
+	
+	<!-- 게시글 등록 -->
+	<insert id="insertDiary" parameterType="com.hoonlog.board.vo.DiaryVO">
+		<selectKey keyProperty="bno" resultType="int" order="BEFORE">
+			SELECT DIARY_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO 
+			DIARY (BNO, TITLE, CONTENT, WRITER, TAG)
+		VALUES (
+			#{bno}
+			, #{title}
+			, #{content}
+			, #{writer}
+			, #{tag}
+		)
+	</insert>
+ 
+	<!-- 게시글 수정 -->
+	<update id="updateDiary" parameterType="com.hoonlog.board.vo.DiaryVO">
+		UPDATE DIARY SET
+			 TITLE = #{title}
+			, CONTENT = #{content}
+			, TAG = #{tag}
+			, UPDATEDATE = SYSDATE
+		WHERE
+			BNO = ${bno}
+	</update>
+
+	<!-- 게시글 삭제 -->
+	<delete id="deleteDiary" parameterType="int">
+		DELETE FROM BOARD
+		WHERE BNO = #{bno}
+	</delete>
+
+	<!-- 게시글 조회수 -->
+	<update id="updateCnt" parameterType="com.hoonlog.board.vo.DiaryVO">
+		UPDATE DIARY 
+		SET
+			VIEWCNT = VIEWCNT + 1
+		WHERE
+			BNO = #{bno}
+	</update>
+	
+	<!-- 파일 업로드 -->
+	<insert id="insertFile" parameterType="hashMap">
+		INSERT INTO DIARY_FILE(
+			FILE_NO,
+			BNO,
+			ORG_FILE_NAME,
+			STORED_FILE_NAME,
+			FILE_SIZE
+		)VALUES(
+			DIARY_FILE_SEQ.NEXTVAL,
+			#{BNO},
+			#{ORG_FILE_NAME},
+			#{STORED_FILE_NAME},
+			#{FILE_SIZE}
+		)
+    </insert>
+    
+    <!-- 첨부파일 조회 -->
+	<select id="selectFileList" parameterType="int"
+		resultType="hashMap">
+		SELECT FILE_NO,
+		ORG_FILE_NAME,
+		ROUND(FILE_SIZE/1024,1) AS FILE_SIZE
+		FROM DIARY_FILE
+		WHERE BNO = #{BNO}
+		AND DEL_GB = 'N'
+		ORDER BY FILE_NO ASC
+	</select>
+	
+	<!-- 첨부파일 다운 -->
+	<select id="selectFileInfo" parameterType="hashMap" resultType="hashMap">
+		SELECT 
+			STORED_FILE_NAME,
+			ORG_FILE_NAME
+		FROM DIARY_FILE
+		WHERE FILE_NO = #{FILE_NO}
+	</select>
+	
+	<!-- 첨부파일 수정 -->
+	 <update id="updateFile" parameterType="hashMap">
+    	UPDATE DIARY_FILE SET
+    	DEL_GB = 'Y'
+    	WHERE FILE_NO = #{FILE_NO}
+    </update>
+    
+    <!-- 게시글 검색 -->
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND TITLE LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND CONTENT LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND WRITER LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'tc'.toString()">AND (TITLE LIKE '%' || #{keyword} || '%') or (CONTENT LIKE '%' || #{keyword} || '%')</if>
+		</if>
+	</sql>
+ 
+ 
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="memberMapper">
+
+	<!-- 회원 가입 -->
+	<insert id="signup">
+		insert into member(userid, userpw, username, userNname, useraddress, postcode, email, tel, birthDate)
+		values (#{userid}, #{userpw}, #{username}, #{userNname}, #{useraddress}, #{postcode}, #{email}, #{tel}, #{birthDate})
+	</insert>
+	
+	<!-- 로그인 -->
+	<select id="login" resultType="com.hoonlog.member.vo.MemberVO">
+		SELECT *
+		FROM member
+		WHERE userid = #{userid} and userpw = #{userpw}
+	</select>
+	
+	<!-- 회원 정보 -->
+	<select id="userInfo" resultType="com.hoonlog.member.vo.MemberVO">
+		SELECT * FROM member WHERE userid = #{userid}
+	</select>
+	
+	<!-- 회원 정보 수정 -->
+	<update id="updateUserInfo">
+		UPDATE member 
+		SET 
+		username = #{username}, userNname = #{userNname}, 
+		useraddress = #{useraddress}, postcode = #{postcode}, 
+		email = #{email}, tel = #{tel}, birthDate = #{birthDate}
+		WHERE userid = #{userid}
+	</update>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="changePw">
+		UPDATE member 
+		SET 
+		userpw = #{userpw}
+		WHERE userid = #{userid}
+	</update>
+	
+	<!-- 회원 탈퇴 -->
+	<delete id="deleteUser">
+		DELETE FROM member WHERE userid = #{userid} AND userpw = #{userpw}
+	</delete>
+
+</mapper>

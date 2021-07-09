@@ -1,0 +1,55 @@
+@charset "UTF-8";
+
+/* 마이페이지 영역 */
+section.content { padding:20px 0; border-top:2px solid #eee; border-bottom:2px solid #eee; margin-top: 200px;}
+section.content::after { content:""; display:block; clear:both; }
+aside { float:left; width:300px; }
+div#content_box { float:right; width:75%; }
+ /*calc(100% - 300px - 20px)*/
+aside ul li { text-align:center; margin-bottom:10px; list-style: none;}
+aside ul li a { display:block; width:100%; padding:10px 0;}
+aside ul li a:hover { background:#eee; }
+
+section.replyList ol li { padding:5px 0; border-bottom:2px solid #eee; }
+section.replyList div.replyContent { padding:2px; margin:2px 10px; }
+section.replyList div.userInfo .userName { font-size:15px; font-weight:bold; }
+
+.board_title {
+	font-weight : 700;
+	font-size : 22pt;
+	margin : 10pt;
+}
+
+.board_info_box {
+	color : #6B6B6B;
+	margin : 10pt;
+}
+
+.board_writer {
+	font-size : 10pt;
+	margin-right : 10pt;
+}
+
+.board_date {
+	font-size : 10pt;
+}
+.board_cnt {
+	font-size : 10pt;
+}
+
+.board_content {
+	color : #444343;
+	font-size : 12pt;
+	margin : 10pt;
+}
+
+.board_tag {
+	font-size : 11pt;
+	margin : 10pt;
+	padding-bottom : 10pt;
+}
+
+.header { 
+	width: auto;
+	height: 100px;
+}		
